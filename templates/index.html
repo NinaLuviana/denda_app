@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rekap Denda</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f8;
+            color: #333;
+            padding: 20px;
+        }
+        h2, h3 {
+            color: #2c3e50;
+        }
+        form, table {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        select, input[type="number"] {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin: 10px 0;
+            width: 200px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            background-color: #2980b9;
+            color: white;
+            padding: 12px;
+        }
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h2>Tambah Data Kesalahan</h2>
+    <form method="POST" action="/tambah">
+        <label for="nama">Nama:</label><br>
+        <select name="nama" required>
+            {% for n in nama_terdaftar %}
+                <option value="{{ n }}">{{ n }}</option>
+            {% endfor %}
+        </select><br>
+
+        <label for="kesalahan">Jumlah Kesalahan:</label><br>
+        <input type="number" name="kesalahan" min="1" required><br>
+
+        <button type="submit">Simpan</button>
+    </form>
+
+    <h3>Data Denda</h3>
+    <table>
+        <tr>
+            <th>Nama</th>
+            <th>Kesalahan</th>
+            <th>Sudah Dibayar</th>
+            <th>Sisa Denda</th>
+            <th>Tanggal</th>
+            <th>Aksi</th>
+        </tr>
+        {% for row in data %}
+        <tr>
+            <td>{{ row[1] }}</td>
+            <td>{{ row[2] }}</td>
+            <td>Rp{{ "{:,}".format(row[3]) }}</td>
+            <td>Rp{{ "{:,}".format(row[5]) }}</td>
+            <td>{{ row[4] }}</td>
+            <td><a href="{{ url_for('bayar', id=row[0]) }}">Bayar</a></td>
+            <td>
+                <a href="#" onclick="event.preventDefault(); document.getElementById('hapus-form-{{ row[0] }}').submit();" style="color: red; text-decoration: none;">hapus</a>
+                <form id="hapus-form-{{ row[0] }}" action="{{ url_for('hapus', id=row[0]) }}" method="POST" style="display:none;"></form>
+            </td>
+
+
+
+
+        </tr>
+        {% endfor %}
+    </table>
+
+        <h3>Total Denda per Orang</h3>
+    <table>
+        <tr>
+            <th>Nama</th>
+            <th>Total Denda (Rp)</th>
+        </tr>
+        {% for item in total_per_nama %}
+        <tr>
+            <td>{{ item[0] }}</td>
+            <td>Rp{{ "{:,}".format(item[1]) }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</body>
+</html>
